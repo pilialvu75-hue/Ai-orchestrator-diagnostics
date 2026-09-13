@@ -15,12 +15,8 @@
     "severity"
   ],
   "properties": {
-    "schema": {
-      "const": "ai-orchestrator.diagnostics.event.v2"
-    },
-    "producer": {
-      "enum": ["library", "researcher"]
-    },
+    "schema": { "const": "ai-orchestrator.diagnostics.event.v2" },
+    "producer": { "enum": ["library", "researcher"] },
     "producer_version": {
       "type": "string",
       "minLength": 1,
@@ -75,7 +71,10 @@
       "type": "object",
       "maxProperties": 32,
       "propertyNames": {
-        "pattern": "^[A-Za-z0-9._-]{1,64}$"
+        "allOf": [
+          { "pattern": "^[A-Za-z0-9._-]{1,64}$" },
+          { "not": { "pattern": "^(?i:token|secret|password|authorization|cookie|prompt|conversation|raw_payload|api_key|private_key)$" } }
+        ]
       },
       "additionalProperties": {
         "type": ["string", "number", "integer", "boolean", "null"],
