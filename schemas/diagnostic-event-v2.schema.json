@@ -1,0 +1,89 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/pilialvu75-hue/Ai-orchestrator-diagnostics/schemas/diagnostic-event-v2.schema.json",
+  "title": "AI Orchestrator shared diagnostic event v2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "producer",
+    "producer_version",
+    "platform",
+    "instance",
+    "timestamp",
+    "event",
+    "severity"
+  ],
+  "properties": {
+    "schema": { "const": "ai-orchestrator.diagnostics.event.v2" },
+    "producer": { "enum": ["library", "researcher"] },
+    "producer_version": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[A-Za-z0-9._+\\/-]+$"
+    },
+    "platform": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64,
+      "pattern": "^[A-Za-z0-9._-]+$"
+    },
+    "instance": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[A-Za-z0-9._-]+$"
+    },
+    "session": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[A-Za-z0-9._:-]+$"
+    },
+    "run": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[A-Za-z0-9._:-]+$"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "(?:Z|[+-][0-9]{2}:[0-9]{2})$"
+    },
+    "event": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[A-Z0-9][A-Z0-9_.-]*$"
+    },
+    "severity": {
+      "enum": ["debug", "info", "warning", "error", "critical"]
+    },
+    "correlation_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[A-Za-z0-9._:-]+$"
+    },
+    "fields": {
+      "type": "object",
+      "maxProperties": 32,
+      "propertyNames": {
+        "allOf": [
+          { "pattern": "^[a-z0-9._-]{1,64}$" },
+          { "not": { "enum": ["token", "secret", "password", "authorization", "cookie", "prompt", "conversation", "raw_payload", "api_key", "private_key"] } }
+        ]
+      },
+      "additionalProperties": {
+        "type": ["string", "number", "integer", "boolean", "null"],
+        "maxLength": 512
+      }
+    }
+  },
+  "anyOf": [
+    { "required": ["session"] },
+    { "required": ["run"] }
+  ]
+}
