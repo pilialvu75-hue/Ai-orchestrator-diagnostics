@@ -4,7 +4,7 @@
 
 ## Compatibility rule
 
-The Android app producer remains unchanged and is the compatibility baseline:
+The app producer keeps the same legacy release/asset namespace across Android, Windows, macOS and Linux. Android remains the compatibility baseline for the wire format:
 
 - producer: `app`
 - release tag: `diagnostics-v1-<installation-id>`
@@ -62,6 +62,16 @@ Each producer owns only its namespace.
 
 For the app, keep the existing 1 MiB/archive and 20 MiB/installation limits. Library and Researcher should default to the same limits unless their implementation documents a stricter producer-specific budget.
 
+### App cross-platform triage fields
+
+The legacy app payload stays line-oriented, but desktop app builds may emit privacy-safe closed events including:
+
+- `DIAGNOSTICS_SESSION`: platform and transport readiness only;
+- `LOCAL_RUNTIME_ERROR`: closed runtime failure classification such as `unsendable_isolate_object`, `process_start_failed`, or `io_error`, with a bounded object class;
+- `WINDOWS_NATIVE_TRACE`: filtered native Windows startup/crash summary with stage, fatal/clean-shutdown status, exception code and module basenames.
+
+These events MUST NOT carry prompt text, conversation text, arbitrary exception messages, full filesystem paths, raw stack addresses, credentials or authorization material.
+
 ## GitHub endpoints
 
 For repository `pilialvu75-hue/Ai-orchestrator-diagnostics`:
@@ -80,4 +90,4 @@ A producer credential should be a fine-grained token scoped only to this reposit
 
 Do not infer service emptiness from the `main` branch. Enumerate releases and assets. Release bodies contain recent cumulative filtered events; archive assets contain the longer rotated history.
 
-Always distinguish producer/instance, platform, build or commit, capture session/run, event timestamp and event origin. A build that recovered Android process-exit history is the collection context, not necessarily the build on which the historical process exit occurred. Deduplicate repeated records by their original event payload and correlation identity where available.
+Always distinguish producer/instance, platform, build or commit, capture session/run, event timestamp and event origin. A build that recovered Android process-exit history or a previous Windows native trace is the collection context, not necessarily the build on which the historical failure occurred. Deduplicate repeated records by their original event payload and correlation identity where available.
