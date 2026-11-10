@@ -95,15 +95,15 @@ Always distinguish producer/instance, platform, build or commit, capture session
 
 ## WEmulDroid pilot producer (Windows, managed via Android Beta Access)
 
-- \`producer: wemuldroid\` validated by v2 schema; not part of the legacy \`app\` namespace.
-- Release tag: \`diagnostics-wemuldroid-v1-<installation-uuid>\`.
-- Append-only immutable archive assets: \`wemuldroid-diag-<sha256>.jsonl\`.
-- Each event is an allowlisted, opt-in structured event with \`instance\` randomized per-installation UUID; no name, email, IP, screenshot, logcat or free-form exceptions.
-- Supported event names: \`APP_START\`, \`APP_EXIT\`, \`APP_ERROR\`, \`EMULATOR_ERROR\`, \`INSTALLER_ERROR\`, \`PERF_SAMPLE\`.
-- Allowed numeric metrics: \`cpu_pct\`, \`ram_mb\`, \`gpu_pct\`, \`fps\`, \`startup_ms\`, \`duration_ms\`, \`io_mb\`, \`network_kb\`, \`uptime_sec\`; \`error_code\` is closed uppercase alphanumeric/underscore/hyphen (not a free-form message).
+- `producer: wemuldroid` validated by v2 schema; not part of the legacy `app` namespace.
+- Release tag: `diagnostics-wemuldroid-v1-<installation-uuid>`.
+- Append-only immutable archive assets: `wemuldroid-diag-<sha256>.jsonl`.
+- Each event is an allowlisted, opt-in structured event with `instance` randomized per-installation UUID; no name, email, IP, screenshot, logcat or free-form exceptions.
+- Supported event names: `APP_START`, `APP_EXIT`, `APP_ERROR`, `EMULATOR_ERROR`, `INSTALLER_ERROR`, `PERF_SAMPLE`.
+- Allowed numeric metrics: `cpu_pct`, `ram_mb`, `gpu_pct`, `fps`, `startup_ms`, `duration_ms`, `io_mb`, `network_kb`, `uptime_sec`; `error_code` is closed uppercase alphanumeric/underscore/hyphen (not a free-form message).
 - The first pilot instrumentation *only* supplies launcher CPU/RAM/startup/uptime and a generic UI error classification. GPU/FPS/emulator metrics are reserved fields, not yet proven to be collected.
 - Client never carries a GitHub token. The Cloudflare Worker uses a server-side fine-grained token scoped to this repository and only marks an outbox item shipped after GitHub confirms archive upload (or the matching asset exists).
-- **Rotation within this producer's own releases and 20 MiB archive budget are still required before calling the pipeline production-ready.** Never rotate another producer's release. In-progress delivery is not proof of final durability.
+- **The producer-specific 20 MiB rotation code is present in WEmulDroid's pilot Worker but is NOT yet verified against live GitHub Releases.** Never rotate another producer's release. In-progress delivery is not proof of final durability.
 - The Diagnostics repository is publicly readable; publishing must require explicit opt-in, and fields must be filtered on both client and server.
 
 See [WEmulDroid Beta Access pilot](https://github.com/pilialvu75-hue/WEmulDroid/tree/feature/beta-access-pilot/beta-access) for integration code. Activation approvals and private admin tokens are **not** published to this repository.
