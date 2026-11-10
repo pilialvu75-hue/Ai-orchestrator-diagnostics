@@ -106,4 +106,4 @@ Always distinguish producer/instance, platform, build or commit, capture session
 - **The producer-specific 20 MiB rotation code is present in WEmulDroid's pilot Worker but is NOT yet verified against live GitHub Releases.** Never rotate another producer's release. In-progress delivery is not proof of final durability.
 - The Diagnostics repository is publicly readable; publishing must require explicit opt-in, and fields must be filtered on both client and server.
 
-See [WEmulDroid Beta Access pilot](https://github.com/pilialvu75-hue/WEmulDroid/tree/feature/beta-access-pilot/beta-access) for integration code. Activation approvals and private admin tokens are **not** published to this repository.
+See [AIVEXUS Beta Access central service](https://github.com/pilialvu75-hue/Beta-access/tree/feature/wemuldroid-pilot) for the Android console and diagnostics relay, and [WEmulDroid Windows adapter](https://github.com/pilialvu75-hue/WEmulDroid/tree/feature/beta-access-pilot) for the tested application's client. Activation approvals and private admin tokens are **not** published to this repository.
