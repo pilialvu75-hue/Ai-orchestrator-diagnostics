@@ -16,7 +16,7 @@
   ],
   "properties": {
     "schema": { "const": "ai-orchestrator.diagnostics.event.v2" },
-    "producer": { "enum": ["library", "researcher"] },
+    "producer": { "enum": ["library", "researcher", "wemuldroid"] },
     "producer_version": {
       "type": "string",
       "minLength": 1,
