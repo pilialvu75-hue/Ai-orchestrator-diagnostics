@@ -91,3 +91,19 @@ A producer credential should be a fine-grained token scoped only to this reposit
 Do not infer service emptiness from the `main` branch. Enumerate releases and assets. Release bodies contain recent cumulative filtered events; archive assets contain the longer rotated history.
 
 Always distinguish producer/instance, platform, build or commit, capture session/run, event timestamp and event origin. A build that recovered Android process-exit history or a previous Windows native trace is the collection context, not necessarily the build on which the historical failure occurred. Deduplicate repeated records by their original event payload and correlation identity where available.
+
+
+## WEmulDroid pilot producer (Windows, managed via Android Beta Access)
+
+- `producer: wemuldroid` validated by v2 schema; not part of the legacy `app` namespace.
+- Release tag: `diagnostics-wemuldroid-v1-<installation-uuid>`.
+- Append-only immutable archive assets: `wemuldroid-diag-<sha256>.jsonl`.
+- Each event is an allowlisted, opt-in structured event with `instance` randomized per-installation UUID; no name, email, IP, screenshot, logcat or free-form exceptions.
+- Supported event names: `APP_START`, `APP_EXIT`, `APP_ERROR`, `EMULATOR_ERROR`, `INSTALLER_ERROR`, `PERF_SAMPLE`.
+- Allowed numeric metrics: `cpu_pct`, `ram_mb`, `gpu_pct`, `fps`, `startup_ms`, `duration_ms`, `io_mb`, `network_kb`, `uptime_sec`; `error_code` is closed uppercase alphanumeric/underscore/hyphen (not a free-form message).
+- The first pilot instrumentation *only* supplies launcher CPU/RAM/startup/uptime and a generic UI error classification. GPU/FPS/emulator metrics are reserved fields, not yet proven to be collected.
+- Client never carries a GitHub token. The Cloudflare Worker uses a server-side fine-grained token scoped to this repository and only marks an outbox item shipped after GitHub confirms archive upload (or the matching asset exists).
+- **The producer-specific 20 MiB rotation code is present in WEmulDroid's pilot Worker but is NOT yet verified against live GitHub Releases.** Never rotate another producer's release. In-progress delivery is not proof of final durability.
+- The Diagnostics repository is publicly readable; publishing must require explicit opt-in, and fields must be filtered on both client and server.
+
+See [AIVEXUS Beta Access central service](https://github.com/pilialvu75-hue/Beta-access/tree/feature/wemuldroid-pilot) for the Android console and diagnostics relay, and [WEmulDroid Windows adapter](https://github.com/pilialvu75-hue/WEmulDroid/tree/feature/beta-access-pilot) for the tested application's client. Activation approvals and private admin tokens are **not** published to this repository.
