@@ -133,4 +133,4 @@ export async function handle(request,env,fetcher=fetch,now=Date.now()) {
     return json({status:"verified",...receipt});
   } catch { return fail(503,"delivery_unverified"); }
 }
-export default {fetch:handle};
+export default {fetch(request,env) { return handle(request,env); }};

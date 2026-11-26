@@ -1,0 +1,31 @@
+name: Standalone diagnostics relay tests
+on:
+  pull_request:
+    paths:
+      - 'relay/**'
+      - '.github/workflows/relay-tests.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --test relay/test/worker.test.mjs
+      - name: Validate atomic quota SQL on SQLite
+        run: |
+          python3 - <<'PY'
+          import sqlite3
+          db=sqlite3.connect(':memory:')
+          db.executescript(open('relay/migrations/0001_relay.sql').read())
+          sql="INSERT INTO relay_batches(tag,digest,day) SELECT ?,?,? WHERE (SELECT count(*) FROM relay_batches WHERE tag=? AND day=?) < ? AND (SELECT count(*) FROM relay_batches WHERE tag=?) < ? ON CONFLICT(tag,digest) DO NOTHING"
+          for i in range(21):
+              db.execute(sql, ('rv',str(i),'2026-11-26','rv','2026-11-26',20,'rv',200))
+          assert db.execute('SELECT count(*) FROM relay_batches').fetchone()[0]==20
+          db.execute(sql, ('rv','0','2026-11-27','rv','2026-11-27',20,'rv',200))
+          assert db.execute('SELECT count(*) FROM relay_batches').fetchone()[0]==20
+          PY
